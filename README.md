@@ -1,12 +1,13 @@
 # videoanalyse
 Script um mit dem Videoanalysetool umzugehen.
 
-#install
+# install
 git clone https://github.com/sfuerder/videoanalyse.git
 Hinweis: Es muss ffmpeg und php installiert sein
 
-##Alternativ
+## Alternativ
 Laden sie sich dass installationsscript herunter
+[Script](https://videoanalyse.sebastian-fuerderer.de/install.zip) - Das installationsscript
 
-#Ausführen
+# Ausführen
 videoanalyse ausführen
