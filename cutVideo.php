@@ -1,20 +1,19 @@
 <?php
 $origName = readline("Original Video name eingeben: ");
 $jsonName = readline("Json Name eingeben: ");
+$startTimeOffset = "01:30";
+$duration = "00:01:35";
 
 $inputPath = "Videos/original/{$origName}.mp4";
 $json = "json/{$jsonName}.json";
 
-$folderName = date("d-m-Y_H-i");
+$folderName = "{$origName}_".date("YmdHi");
 $filename = basename($inputPath);
 $outputPath = "Videos/changed/{$folderName}/";
 
 if(!file_exists($outputPath)){
   mkdir($outputPath,0777,true);
 }
-
-$startTime = 0;
-$endTime = 10;
 
 $output = $outputPath.$filename;
 
@@ -25,18 +24,25 @@ $i = 0;
 foreach ($events as $time => $event) {
   $i++;
   $startTimeSplit = explode(":",$time);
+  $offset = explode(":",$startTimeOffset);
   $startTimeMinute = intval($startTimeSplit[0]);
   $startTimeSecond = intval($startTimeSplit[1]);
-  if($startTimeMinute<1){
-    $startTimeSecond = 0;
-  }else{
-    $startTimeMinute--;
+  $offsetMinute = intval($offset[0]);
+  $offsetSecond = intval($offset[1]);
+  $startTimeSplit = $startTimeMinute*60+$startTimeSecond;
+  $offset = $offsetMinute*60+$offsetSecond;
+
+  $timeDiff = $startTimeSplit-$offset;
+  if($timeDiff<0){
+    $timeDiff = 0;
   }
 
-  $startTime = sprintf("00:%02d:%02d",$startTimeMinute,$startTimeSecond);
+  $minutes = intdiv($timeDiff,60);
+  $seconds = $timeDiff%60;
+  $startTime = sprintf("00:%02d:%02d",$minutes,$seconds);
 
   echo "Cut part nr {$i}: Start time: {$startTime}\n";
-  cutVideo($startTime,"00:02:00",$inputPath,$outputPath.$i.".mp4");
+  cutVideo($startTime,$duration,$inputPath,$outputPath.$i.".mp4");
 }
 
 
