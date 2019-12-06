@@ -1,8 +1,8 @@
 <?php
 $origName = readline("Original Video name eingeben: ");
 $jsonName = readline("Json Name eingeben: ");
-$startTimeOffset = "00:45";
-$duration = "00:00:50";
+$startTimeOffset = "00:30";
+$duration = "00:00:40";
 
 $inputPath = "Videos/original/{$origName}.mp4";
 $json="";
