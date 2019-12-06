@@ -1,8 +1,8 @@
 <?php
 $origName = readline("Original Video name eingeben: ");
 $jsonName = readline("Json Name eingeben: ");
-$startTimeOffset = "01:30";
-$duration = "00:01:35";
+$startTimeOffset = "00:45";
+$duration = "00:00:50";
 
 $inputPath = "Videos/original/{$origName}.mp4";
 $json = "json/{$jsonName}.json";
@@ -21,7 +21,12 @@ $events = json_decode(file_get_contents($json),true);
 asort($events);
 
 $i = 0;
+$lastEvent = "";
 foreach ($events as $time => $event) {
+  if($lastEvent != $event){
+    $lastEvent = $event;
+    $i = 0;
+  }
   $i++;
   $startTimeSplit = explode(":",$time);
   $offset = explode(":",$startTimeOffset);
@@ -42,11 +47,46 @@ foreach ($events as $time => $event) {
   $startTime = sprintf("00:%02d:%02d",$minutes,$seconds);
 
   echo "Cut part nr {$i}: Start time: {$startTime}\n";
-  cutVideo($startTime,$duration,$inputPath,$outputPath.$i.".mp4");
+  cutVideo($startTime,$duration,$inputPath,$outputPath.correctFilename($event)."_".$i.".mp4");
 }
 
 
 function cutVideo($startTime,$duration,$inputPath,$outputPath){
   $cmd = "ffmpeg -ss {$startTime} -i \"{$inputPath}\" -c copy -t {$duration} \"{$outputPath}\" 2>&1";
   exec($cmd);
+}
+
+function correctFilename($dateiname){
+  $dateiname = strtolower ( $dateiname );
+  $dateiname = str_replace ('"', "-", $dateiname );
+  $dateiname = str_replace ("'", "-", $dateiname );
+  $dateiname = str_replace ("*", "-", $dateiname );
+  $dateiname = str_replace ("ß", "ss", $dateiname );
+  $dateiname = str_replace ("&szlig;", "ss", $dateiname );
+  $dateiname = str_replace ("ä", "ae", $dateiname );
+  $dateiname = str_replace ("&auml;", "ae", $dateiname );
+  $dateiname = str_replace ("ö", "oe", $dateiname );
+  $dateiname = str_replace ("&ouml;", "oe", $dateiname );
+  $dateiname = str_replace ("ü", "ue", $dateiname );
+  $dateiname = str_replace ("&uuml;", "ue", $dateiname );
+  $dateiname = str_replace ("&Auml;", "ae", $dateiname );
+  $dateiname = str_replace ("&Ouml;", "oe", $dateiname );
+  $dateiname = str_replace ("&Uuml;", "ue", $dateiname );
+  $dateiname = htmlentities ( $dateiname );
+  $dateiname = str_replace ("&", "und", $dateiname );
+  $dateiname = str_replace ("+", "und", $dateiname );
+  $dateiname = str_replace ("(", "-", $dateiname );
+  $dateiname = str_replace (")", "-", $dateiname );
+  $dateiname = str_replace (" ", "-", $dateiname );
+  $dateiname = str_replace ("\'", "-", $dateiname );
+  $dateiname = str_replace ("/", "-", $dateiname );
+  $dateiname = str_replace ("?", "-", $dateiname );
+  $dateiname = str_replace ("!", "-", $dateiname );
+  $dateiname = str_replace (":", "-", $dateiname );
+  $dateiname = str_replace (";", "-", $dateiname );
+  $dateiname = str_replace (",", "-", $dateiname );
+  $dateiname = str_replace ("--", "-", $dateiname );
+
+  $dateiname = filter_var($dateiname, FILTER_SANITIZE_URL);
+  return ($dateiname);
 }
