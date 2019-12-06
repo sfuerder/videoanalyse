@@ -5,7 +5,12 @@ $startTimeOffset = "00:45";
 $duration = "00:00:50";
 
 $inputPath = "Videos/original/{$origName}.mp4";
-$json = "json/{$jsonName}.json";
+$json="";
+if(empty($jsonName)||ctype_space($jsonName)){
+  $json = "json/{$origName}.json";
+}else{
+  $json = "json/{$jsonName}.json";
+}
 
 $folderName = "{$origName}_".date("YmdHi");
 $filename = basename($inputPath);
